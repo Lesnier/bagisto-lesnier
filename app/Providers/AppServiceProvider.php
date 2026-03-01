@@ -15,6 +15,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Registrar Telescope solo si está instalado (no disponible en producción con --no-dev)
+        if (class_exists(\Laravel\Telescope\TelescopeApplicationServiceProvider::class)) {
+            $this->app->register(\App\Providers\TelescopeServiceProvider::class);
+        }
+
         $allowedIPs = array_map('trim', explode(',', config('app.debug_allowed_ips')));
 
         $allowedIPs = array_filter($allowedIPs);
@@ -22,12 +27,6 @@ class AppServiceProvider extends ServiceProvider
         if (empty($allowedIPs)) {
             return;
         }
-
-        // if (in_array(Request::ip(), $allowedIPs)) {
-        //     Debugbar::enable();
-        // } else {
-        //     Debugbar::disable();
-        // }
     }
 
     /**
