@@ -15,13 +15,15 @@ export HOME="${HOME:-/home/keywordcv}"
 # Asegurar que ~/bin y rutas comunes de composer estén en el PATH
 export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
-# Detectar composer: global, local o como phar
+# Detectar composer: global, local, cPanel o como phar
 if command -v composer &>/dev/null; then
     COMPOSER="composer"
 elif [ -f "$HOME/bin/composer" ]; then
     COMPOSER="$HOME/bin/composer"
 elif [ -f "/usr/local/bin/composer" ]; then
     COMPOSER="/usr/local/bin/composer"
+elif [ -f "/opt/cpanel/ea-wappspector/composer.phar" ]; then
+    COMPOSER="php /opt/cpanel/ea-wappspector/composer.phar"
 elif [ -f "$(pwd)/composer.phar" ]; then
     COMPOSER="php $(pwd)/composer.phar"
 else
