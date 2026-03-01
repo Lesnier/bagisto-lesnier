@@ -7,6 +7,28 @@
 
 set -e  # Detiene el script si cualquier comando falla
 
+# Cargar el entorno del usuario (necesario en sesiones SSH no-interactivas)
+export HOME="${HOME:-/home/keywordcv}"
+[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+[ -f "$HOME/.bash_profile" ] && source "$HOME/.bash_profile"
+
+# Asegurar que ~/bin y rutas comunes de composer estén en el PATH
+export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+# Detectar composer: global, local o como phar
+if command -v composer &>/dev/null; then
+    COMPOSER="composer"
+elif [ -f "$HOME/bin/composer" ]; then
+    COMPOSER="$HOME/bin/composer"
+elif [ -f "/usr/local/bin/composer" ]; then
+    COMPOSER="/usr/local/bin/composer"
+elif [ -f "$(pwd)/composer.phar" ]; then
+    COMPOSER="php $(pwd)/composer.phar"
+else
+    echo "❌ Composer no encontrado. Instálalo primero."
+    exit 1
+fi
+
 APP_DIR="/home/keywordcv/test.keywordcv.com"
 
 echo "🚀 Iniciando deploy..."
@@ -23,7 +45,7 @@ git pull origin main
 
 # 3. Instalar/actualizar dependencias PHP (sin dev en producción)
 echo "📚 Instalando dependencias..."
-composer install --no-dev --optimize-autoloader --no-interaction
+$COMPOSER install --no-dev --optimize-autoloader --no-interaction
 
 # 4. Limpiar todos los cachés de Laravel
 echo "🧹 Limpiando cachés..."
