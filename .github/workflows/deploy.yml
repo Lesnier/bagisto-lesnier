@@ -18,4 +18,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            bash /home/keywordcv/test.keywordcv.com/deploy.sh
+            bash ${{ secrets.DEPLOY_PATH }}/deploy.sh
